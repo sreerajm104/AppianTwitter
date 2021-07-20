@@ -63,7 +63,10 @@ def Show_Tweets(handler_id):
 
 #Run the Flask App
 app = Flask(__name__)
- 
+
+@app.route('/')
+def home():
+	return "Tweet Analyzer"
 
 @app.route('/gettweets',methods=['POST'])
 def getTweets():
