@@ -55,7 +55,8 @@ def Show_Tweets(handler_id):
                 else:
                     return "Positive"
             df["Analysis"] = df["Polarity"].apply(captureAnalysis)
-        return df 
+        data_dict = df.to_dict()
+        return data_dict
     except:
         notweet = list()
         return notweet
