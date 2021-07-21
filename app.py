@@ -1,4 +1,4 @@
-from flask import Flask,request
+from flask import Flask,request,render_template
 import tweepy
 from textblob import TextBlob
 from wordcloud import WordCloud
@@ -65,8 +65,10 @@ def Show_Tweets(handler_id):
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-	return "Tweet Analyzer"
+def home():    
+    return render_template('index.html')
+
+# 	return "Tweet Analyzer"
 
 @app.route('/gettweets',methods=['POST'])
 def getTweets():
