@@ -85,3 +85,4 @@ widgetsnbextension==3.5.1
 wincertstore==0.2
 wordcloud==1.7.0
 Flask==1.1.1
+gunicorn==19.9.0
