@@ -26,35 +26,35 @@ api = tweepy.API(auth,wait_on_rate_limit = True)
 def Show_Tweets(handler_id):    
     try:         
         posts = api.user_timeline(screen_name= handler_id,count = 100, lang='en',tweet_mode="extended")                
-            df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
-            def cleantext(text):
-                
-                text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
-                text = re.sub('#', '', text) # Removing '#' hash tag
-                text = re.sub('RT[\s]+', '', text) # Removing RT
-                text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
-                
-                return text
+        df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
+        def cleantext(text):
             
-            df['Tweets'] = df['Tweets'].apply(cleantext)     
-            def getSubjectivity(text):
-                return TextBlob(text).sentiment.subjectivity
+            text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
+            text = re.sub('#', '', text) # Removing '#' hash tag
+            text = re.sub('RT[\s]+', '', text) # Removing RT
+            text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
             
-            df["Subjectivity"] = df["Tweets"].apply(getSubjectivity)
-            
-            def getPolarity(text):
-                return  TextBlob(text).sentiment.polarity
-            
-            df["Polarity"] = df["Tweets"].apply(getPolarity)
-            
-            def captureAnalysis(score):
-                if score < 0:
-                    return "Negative"
-                elif score == 0:
-                    return "Neutral"
-                else:
-                    return "Positive"
-            df["Analysis"] = df["Polarity"].apply(captureAnalysis)
+            return text
+        
+        df['Tweets'] = df['Tweets'].apply(cleantext)     
+        def getSubjectivity(text):
+            return TextBlob(text).sentiment.subjectivity
+        
+        df["Subjectivity"] = df["Tweets"].apply(getSubjectivity)
+        
+        def getPolarity(text):
+            return  TextBlob(text).sentiment.polarity
+        
+        df["Polarity"] = df["Tweets"].apply(getPolarity)
+        
+        def captureAnalysis(score):
+            if score < 0:
+                return "Negative"
+            elif score == 0:
+                return "Neutral"
+            else:
+                return "Positive"
+        df["Analysis"] = df["Polarity"].apply(captureAnalysis)
         data_dict = df.to_dict()
         return data_dict
     except:
