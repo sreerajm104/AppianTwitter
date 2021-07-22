@@ -1,4 +1,5 @@
-from flask import Flask,request,render_template,send_file
+
+import streamlit as st
 import tweepy
 from textblob import TextBlob
 from wordcloud import WordCloud
@@ -8,107 +9,327 @@ import re
 import matplotlib.pyplot as plt
 from PIL import Image
 import seaborn as sns
-import time
 
-# Assign API Key and authenticate tweepy
-consumer_key = "Nj3kha2CYN94LBW2M54ezRPhO"
-consumer_secret = "4PqwK44LqtxNmhxFbOQC3EwJockvcLZA5bLvmVAy9EjH89Ia1y"
-access_token = "1108075687380836352-5pDD452FKejmf9GXo3hiTNFqwEGtYF"
-access_token_secret = "JaOVt7P3GTx0oX65OrOPzqRwVRNKsYErt3NXeuMnc1w2z"
 
-#Authentication
 
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-#Create API object
-api = tweepy.API(auth,wait_on_rate_limit = True)
+# consumerKey = #confidential
+# consumerSecret = #confidential
+# accessToken = #confidential
+# accessTokenSecret = #confidential
+consumerKey = "Nj3kha2CYN94LBW2M54ezRPhO"
+consumerSecret = "4PqwK44LqtxNmhxFbOQC3EwJockvcLZA5bLvmVAy9EjH89Ia1y"
+accessToken = "1108075687380836352-5pDD452FKejmf9GXo3hiTNFqwEGtYF"
+accessTokenSecret = "JaOVt7P3GTx0oX65OrOPzqRwVRNKsYErt3NXeuMnc1w2z"
 
-def Show_Tweets(handler_id):    
-    try:         
-        posts = api.user_timeline(screen_name= handler_id,count = 100, lang='en',tweet_mode="extended")                
-        df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
-        def cleantext(text):
-            
-            text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
-            text = re.sub('#', '', text) # Removing '#' hash tag
-            text = re.sub('RT[\s]+', '', text) # Removing RT
-            text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
-            
-            return text
-        
-        df['Tweets'] = df['Tweets'].apply(cleantext)     
-        def getSubjectivity(text):
-            return TextBlob(text).sentiment.subjectivity
-        
-        df["Subjectivity"] = df["Tweets"].apply(getSubjectivity)
-        
-        def getPolarity(text):
-            return  TextBlob(text).sentiment.polarity
-        
-        df["Polarity"] = df["Tweets"].apply(getPolarity)
-        
-        def captureAnalysis(score):
-            if score < 0:
-                return "Negative"
-            elif score == 0:
-                return "Neutral"
-            else:
-                return "Positive"
-        df["Analysis"] = df["Polarity"].apply(captureAnalysis)
-        data_dict = df.to_dict()
-        return data_dict
-    except:
-        notweet = list()
-        return notweet
+
+#Create the authentication object
+authenticate = tweepy.OAuthHandler(consumerKey, consumerSecret) 
     
+# Set the access token and access token secret
+authenticate.set_access_token(accessToken, accessTokenSecret) 
     
-def World_Cloud(handler_id):
-    posts = api.user_timeline(screen_name= handler_id,count = 100, lang='en',tweet_mode="extended")                
-    df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
-    def cleantext(text):
-        
-        text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
-        text = re.sub('#', '', text) # Removing '#' hash tag
-        text = re.sub('RT[\s]+', '', text) # Removing RT
-        text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
-        
-        return text
-    
-    df['Tweets'] = df['Tweets'].apply(cleantext)
-    
-    allwords = ' '.join([twt for twt in df["Tweets"]])
-    worldCloud = WordCloud(width=800,height = 500,random_state=21,max_font_size=120).generate(allwords)
-    # plt.imshow(worldCloud, interpolation="bilinear")
-    # plt.axis('off')
-    # plt.savefig("WC.JPEG")
-    # imgopen = Image.open("WC.JPEG")
-    # imgopen = worldCloud.to_file("WC.JPEG")
-    return worldCloud
+# Creating the API object while passing in auth information
+api = tweepy.API(authenticate, wait_on_rate_limit = True)
 
 
-#Run the Flask App
-app = Flask(__name__)
 
-@app.route('/')
-def home():    
-    return render_template('index.html')
 
-# 	return "Tweet Analyzer"
 
-@app.route('/gettweets',methods=['POST'])
-def getTweets():
-    if request.method == 'POST':        
-        handler_id = request.args.get('handler_id')
-        displaytweet = Show_Tweets(handler_id)
-        return displaytweet
 
-@app.route('/wordcloud',methods=['POST'])
-def wordcloud():
-    if request.method == 'POST':        
-        handler_id = request.args.get('handler_id')
-        imgDisp = World_Cloud(handler_id)
-        imgDisp.to_file("WC.JPEG")
-        return send_file("WC.JPEG", mimetype='image/gif',as_attachment=True)
-    
-if __name__ == '__main__':
-	app.run(debug=True)
+
+
+
+
+
+
+
+
+
+#plt.style.use('fivethirtyeight')
+
+
+
+
+
+
+
+
+
+
+def app():
+
+
+	st.title("Tweet Analyzer 🔥")
+
+
+	activities=["Tweet Analyzer","Generate Twitter Data"]
+
+	choice = st.sidebar.selectbox("Select Your Activity",activities)
+
+	
+
+	if choice=="Tweet Analyzer":
+
+		st.subheader("Analyze the tweets of your favourite Personalities")
+
+		st.subheader("This tool performs the following tasks :")
+
+		st.write("1. Fetches the 5 most recent tweets from the given twitter handel")
+		st.write("2. Generates a Word Cloud")
+		st.write("3. Performs Sentiment Analysis a displays it in form of a Bar Graph")
+
+
+		
+
+
+		raw_text = st.text_area("Enter the exact twitter handle of the Personality (without @)")
+
+
+
+		st.markdown("<--------     Also Do checkout the another cool tool from the sidebar")
+
+		Analyzer_choice = st.selectbox("Select the Activities",  ["Show Recent Tweets","Generate WordCloud" ,"Visualize the Sentiment Analysis"])
+
+
+		if st.button("Analyze"):
+
+			
+			if Analyzer_choice == "Show Recent Tweets":
+
+				st.success("Fetching last 5 Tweets")
+
+				
+				def Show_Recent_Tweets(raw_text):
+
+					# Extract 100 tweets from the twitter user
+					posts = api.user_timeline(screen_name=raw_text, count = 100, lang ="en", tweet_mode="extended")
+
+					
+					def get_tweets():
+
+						l=[]
+						i=1
+						for tweet in posts[:5]:
+							l.append(tweet.full_text)
+							i= i+1
+						return l
+
+					recent_tweets=get_tweets()		
+					return recent_tweets
+
+				recent_tweets= Show_Recent_Tweets(raw_text)
+
+				st.write(recent_tweets)
+
+
+
+			elif Analyzer_choice=="Generate WordCloud":
+
+				st.success("Generating Word Cloud")
+
+				def gen_wordcloud():
+
+					posts = api.user_timeline(screen_name=raw_text, count = 100, lang ="en", tweet_mode="extended")
+
+
+					# Create a dataframe with a column called Tweets
+					df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
+					# word cloud visualization
+					allWords = ' '.join([twts for twts in df['Tweets']])
+					wordCloud = WordCloud(width=500, height=300, random_state=21, max_font_size=110).generate(allWords)
+					plt.imshow(wordCloud, interpolation="bilinear")
+					plt.axis('off')
+					plt.savefig('WC.jpg')
+					img= Image.open("WC.jpg") 
+					return img
+
+				img=gen_wordcloud()
+
+				st.image(img)
+
+
+
+			else:
+
+
+
+				
+				def Plot_Analysis():
+
+					st.success("Generating Visualisation for Sentiment Analysis")
+
+					
+
+
+					posts = api.user_timeline(screen_name=raw_text, count = 100, lang ="en", tweet_mode="extended")
+
+					df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
+
+
+					
+					# Create a function to clean the tweets
+					def cleanTxt(text):
+					 text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
+					 text = re.sub('#', '', text) # Removing '#' hash tag
+					 text = re.sub('RT[\s]+', '', text) # Removing RT
+					 text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
+					 
+					 return text
+
+
+					# Clean the tweets
+					df['Tweets'] = df['Tweets'].apply(cleanTxt)
+
+
+					def getSubjectivity(text):
+					   return TextBlob(text).sentiment.subjectivity
+
+					# Create a function to get the polarity
+					def getPolarity(text):
+					   return  TextBlob(text).sentiment.polarity
+
+
+					# Create two new columns 'Subjectivity' & 'Polarity'
+					df['Subjectivity'] = df['Tweets'].apply(getSubjectivity)
+					df['Polarity'] = df['Tweets'].apply(getPolarity)
+
+
+					def getAnalysis(score):
+					  if score < 0:
+					    return 'Negative'
+					  elif score == 0:
+					    return 'Neutral'
+					  else:
+					    return 'Positive'
+					    
+					df['Analysis'] = df['Polarity'].apply(getAnalysis)
+
+
+					return df
+
+
+
+				df= Plot_Analysis()
+
+
+
+				st.write(sns.countplot(x=df["Analysis"],data=df))
+
+
+				st.pyplot(use_container_width=True)
+
+				
+
+	
+
+	else:
+
+		st.subheader("This tool fetches the last 100 tweets from the twitter handel & Performs the following tasks")
+
+		st.write("1. Converts it into a DataFrame")
+		st.write("2. Cleans the text")
+		st.write("3. Analyzes Subjectivity of tweets and adds an additional column for it")
+		st.write("4. Analyzes Polarity of tweets and adds an additional column for it")
+		st.write("5. Analyzes Sentiments of tweets and adds an additional column for it")
+
+
+
+
+
+
+		user_name = st.text_area("*Enter the exact twitter handle of the Personality (without @)*")
+
+		st.markdown("<--------     Also Do checkout the another cool tool from the sidebar")
+
+		def get_data(user_name):
+
+			posts = api.user_timeline(screen_name=user_name, count = 100, lang ="en", tweet_mode="extended")
+
+			df = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
+
+			def cleanTxt(text):
+				text = re.sub('@[A-Za-z0–9]+', '', text) #Removing @mentions
+				text = re.sub('#', '', text) # Removing '#' hash tag
+				text = re.sub('RT[\s]+', '', text) # Removing RT
+				text = re.sub('https?:\/\/\S+', '', text) # Removing hyperlink
+				return text
+
+			# Clean the tweets
+			df['Tweets'] = df['Tweets'].apply(cleanTxt)
+
+
+			def getSubjectivity(text):
+				return TextBlob(text).sentiment.subjectivity
+
+						# Create a function to get the polarity
+			def getPolarity(text):
+				return  TextBlob(text).sentiment.polarity
+
+
+						# Create two new columns 'Subjectivity' & 'Polarity'
+			df['Subjectivity'] = df['Tweets'].apply(getSubjectivity)
+			df['Polarity'] = df['Tweets'].apply(getPolarity)
+
+			def getAnalysis(score):
+				if score < 0:
+					return 'Negative'
+
+				elif score == 0:
+					return 'Neutral'
+
+
+				else:
+					return 'Positive'
+
+		
+						    
+			df['Analysis'] = df['Polarity'].apply(getAnalysis)
+			return df
+
+		if st.button("Show Data"):
+
+			st.success("Fetching Last 100 Tweets")
+
+			df=get_data(user_name)
+
+			st.write(df)
+
+
+
+
+
+
+	st.subheader(' ------------------------MAP Tweet Analyzer---------------------- :sunglasses:')
+
+
+			
+
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+	app()
