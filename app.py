@@ -12,14 +12,10 @@ import seaborn as sns
 
 
 
-# consumerKey = #confidential
-# consumerSecret = #confidential
-# accessToken = #confidential
-# accessTokenSecret = #confidential
-consumerKey = "Nj3kha2CYN94LBW2M54ezRPhO"
-consumerSecret = "4PqwK44LqtxNmhxFbOQC3EwJockvcLZA5bLvmVAy9EjH89Ia1y"
-accessToken = "1108075687380836352-5pDD452FKejmf9GXo3hiTNFqwEGtYF"
-accessTokenSecret = "JaOVt7P3GTx0oX65OrOPzqRwVRNKsYErt3NXeuMnc1w2z"
+consumerKey = #confidential
+consumerSecret = #confidential
+accessToken = #confidential
+accessTokenSecret = #confidential
 
 
 #Create the authentication object
@@ -32,27 +28,7 @@ authenticate.set_access_token(accessToken, accessTokenSecret)
 api = tweepy.API(authenticate, wait_on_rate_limit = True)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #plt.style.use('fivethirtyeight')
-
-
-
-
-
-
-
 
 
 
@@ -299,7 +275,7 @@ def app():
 
 
 
-	st.subheader(' ------------------------MAP Tweet Analyzer---------------------- :sunglasses:')
+	st.subheader(' ------------------------Created By :  HARIT SHANDILYA ---------------------- :sunglasses:')
 
 
 			
